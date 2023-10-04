@@ -1,4 +1,3 @@
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,10 +10,35 @@ namespace dotnet_rpg.Controllers
     [Route("api/[controller]")]
     public class CharacterController : ControllerBase
     {
-        private static Character knight = new Character();
+        private static List<Character> characters = new List<Character> {
+            new Character(),
+            new Character { Id = 1, Name = "Sam" }
+        };
+        private readonly ICharacterService _characterService;
 
-        public IActionResult Get() {
-            return Ok(knight);
+        public CharacterController(ICharacterService characterService)
+        {
+            _characterService = characterService;
         }
-    }
+
+
+        [HttpGet]
+        [Route("GetAll")]
+        public ActionResult<List<Character>> Get() {
+            return Ok(_characterService.GetAllCharacters());
+        }
+
+        [HttpPost("{id}")]
+        public ActionResult<Character> GetSingle(int id) 
+        {
+            return Ok( _characterService.GetCharacterById(id));
+        }
+
+
+        [HttpPost]
+        public ActionResult<List<Character>> AddCharacter(Character newcharacter)
+        {
+            return Ok(_characterService.AddCharacter(newcharacter));
+        }
+    } 
 }
